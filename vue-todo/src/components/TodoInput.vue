@@ -32,7 +32,7 @@ export default {
     };
   },
   methods: {
-    addTodo: function() {
+    addTodo() {
       if (this.newTodoItem !== "") {
         //this.$emit("addTodoItem", this.newTodoItem);
         const text = this.newTodoItem.trim(); // 앞뒤 공백 제거
@@ -42,7 +42,7 @@ export default {
         this.showModal = !this.showModal;
       }
     },
-    clearInput: function() {
+    clearInput() {
       this.newTodoItem = "";
     }
   },

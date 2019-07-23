@@ -654,7 +654,162 @@ name은 css와 연관된 속성이고 tag는 말그대로 tag를 의미한다.
 
 트랜지션의 동작은 1초가 걸린다. 리스트의 생성은 opacity 투명도 0에서부터 1로 진해지고 Y축으로 30px움직여서 본래위치에 도달한다. ()
 
+### 19. 강의 중간 정리
 
+1. 뷰 CLI를 이용한 프로젝트 구성 방법
+2. 컴포넌트 기반 설계 방법
+3. 컴포넌트 구조화 및 컴포넌트 통신 방법
+
+
+
+## ES6 리팩토링
+
+### 1. 개요 및 목표
+
+* 2009 ES5에서 2015 ES6로 major update가 되었다.
+
+* 최신 front end 프레임워크에서 ES6를 권장한다
+
+* [Babel](<https://babeljs.io/>) : ES6의 문법을 각  브라우저의 호환 가능한 ES5로 변환해준다.
+
+  * 뷰 CLI 설치하면서 웹팩에서 설정된다
+
+  * ```javascript
+    module: {
+        loaders: [{
+            test: /\.js$/,
+            loader: 'babel-loader',
+            query: {
+                presets: ['es2015']
+            }
+        }]
+    },
+    ```
+
+### 2. const & let
+
+* 기존에는 function scope만 변수의 범위가 제한되었고, for문은 제한되지 않았는데 
+
+* ES6에서 블록 단위 `{}`로 변수의 범위가 제한되었음
+* const : 한번 선언한 값에 대해서 변경할 수 없음
+  * 객체나 배열의 내부는 변경할 수 있다.
+  * a.num = 10; , a.push(20)
+* let : 한번 선언한 값에 대해서 다시 선언할 수 없음
+
+### 3. ES5 특징 - Hoisting
+
+* Hoisting이란 선언한 함수와 변수가 상단에 있는 것처럼 끌어올려지는 것이다
+
+* js해석기는 코드의 라인 순서와 관계 없이 함수선언식과 변수선언을 위한 메모리 공간을 먼저 확보한다.
+
+  * 함수 statement는 다르다.
+
+* ```javascript
+  function willOverwritten() {
+  	return 10;}
+  willOverwritten();
+  function willOverwritten() {
+      return 5;}
+  }
+  ```
+
+  * 결과는 5가 나온다
+
+1. 함수 선언식과 변수 선언을 hoisting
+2. 변수 대입 및 할당
+
+### 4. [리팩토링] const와 let
+
+* const : object
+* let : for문
+
+### 5. Arrow function
+
+* function 대신에 => 를 쓴다
+
+```javascript
+// ES5
+var arr = ["a", "b", "c"];
+arr.forEach(function(value) {
+    console.log(value);
+});
+
+// ES6
+var arr = ["a", "b", "c"];
+arr.forEach(value => console.log(value));
+```
+
+### 6. 속성 메서드의 축약 특징 설명
+
+* 객체의 속성을 메서드로 사용할 때 function예약어를 생략하고 생성 가능
+
+```javascript
+var dictionary = {
+    words: 100,
+    // ES5
+    lookup: function() {
+        console.log("find words");
+    },
+    // ES6
+    lookup() {
+        console.log("find words");
+    }
+};
+```
+
+### 7. 속성명의 축약 특징 설명
+
+* 컴포넌트 태그명과 컴포넌트 내용이 같으면 축약할 수 있다.
+
+```javascript
+var figures = 10;
+var dictionary = {
+    figures
+};
+```
+
+### 8. Modules- 자바스크립트 모듈화 방법
+
+* 자바스크립트 모듈 로드 라이브러리(AMD, Commons JS)기능을 js언어 자체에서 지원
+* 호출되기 전까지는 코드 실행과 동작을 하지 않는 특징이 있음
+
+* 파일(js, vue,..)에서export를 하면 다른 파일에서 import로 파일의 export 내용을 가져올수 있다
+
+```javascript
+// libs/math.js
+export function sum(x, y) {
+	return x + y;
+}
+export var pi = 3.14159;
+
+// main.js
+import {sum} from 'libs/math.js';
+sum(1, 2);
+```
+
+
+
+* Vue.js에서 마주치는 `default` export
+  * default를 넣으면 하나만 export되기 때문에 하나의 export 영역만을 import하도록 할 수 있다.
+
+```javascript
+// util.js
+export default function (x) {
+    return console.log(x);
+}
+
+// main.js
+import util from 'util.js'
+console.log(util);
+util('hi');
+
+// app.js
+import log from 'util.js'
+console.log(log);
+log("hi");
+```
+
+`util.js를 log객체로 가져온다. 객체명은 정하기 나름이다.`
 
 ## Vuex - 상태 관리 라이브러리
 
@@ -719,7 +874,6 @@ Vue.use(Vuex);
 
 // export 하는 순간 store를 다른 파일에서 사용할 수 있다.
 export const store = new Vuex.Store({
-
 }
 ```
 
@@ -883,7 +1037,7 @@ mutations로 state의 값을 변경하기 위한 데이터를 넘겨주는 곳�
 * 데이터 요청, Promise, ES async와 같은 비동기 처리는 모두 actions에 선언
 * `dispatch('actions이름')`로 호출한다
 
-> actions의 흐름. 비동기 로직은 아닌 코드
+> actions의 흐름예시. 비동기 로직은 아닌 코드
 
 ```javascript
 state: {
@@ -940,7 +1094,9 @@ methods: {
 
 
 
-## 헬퍼 함수 및 ES6 Spread 연산자 소개
+## 헬퍼 함수 
+
+### 1. 헬퍼함수 및 ES6 Spread 연산자 소개
 
 Helper : Store에 있는 아래 4가지 속성들을 간편하게 코딩하는 방법
 
@@ -958,12 +1114,310 @@ export default {
     computed() { ...mapState(['num']), ...mapGetters(['countedNum'])},
     methods: { ...mapMutations(['clickBtn']), ...mapActions(['asyncClickBtn'])}
 }
-
 ```
 
 ...은 ES6의 Object Spread Operator
 
 ### Spread 연산자
 
-?
+```javascript
+let josh = {
+    field: 'web',
+    language: 'js',
+};
+
+let developer = {
+    nation: 'korea',
+    field: josh.field,
+    language: josh.language
+};
+
+console.log(developer);
+```
+
+* developer에서 field와 language를 직접 타이핑해서 josh 객체의 속성을 들고 왔다
+* `...josh`를 하게 되면  josh안의 속성을 다 추가해준다.
+
+### 2. mapState, mapGetters 소개 및  ES6 Spread 연산자 쓰는 이유
+
+* 배열과 객체 표현: [ ]과 { }안에 헬퍼함수를 나열할 수 있다.
+
+#### mapState
+
+* Vuex에 선언한 state 속성을 뷰 컴포넌트에 더 쉽게 연결해주는 헬퍼
+
+* ```javascript
+  import { mapState } from 'vuex'
+  
+  computed() {
+      ...mapState(['num'])
+      // num() { return this.$store.state.num; }
+  }
+  
+  // store.js
+  state: {
+      num: 10
+  }
+  ```
+
+  * ```html
+    // template
+    {{ this.num }}
+    ```
+
+  * vuex에서 mapState라는 함수를 불러오고 computed에서 ...mapState로 다 당겨오고, 배열 인자로 'num'을 선언하면 state의 num을 받아온다
+
+  * this를 사용해서 바로 접근 가능하다
+  * 주석의 코드와 같은 기능이다
+
+#### mapGetters
+
+* Vuex에 선언한 getters 속성을 뷰 컴포넌트에 더 쉽게 연결해주는 헬퍼
+
+* ```javascript
+  // App.vue
+  import {{ mapGetters }} from 'vuex'
+  
+  computed() { ...mapGetters(['reverseMessage'])}
+  
+  // store.js
+  getters: {
+      reverseMessage(state) {
+          return state.msg.split('').reverse().join('');
+      }
+  }
+  ```
+
+* ```html
+  <p>
+      {{ this.reverseMessage }}
+  </p>
+  ```
+
+### 3. [리팩토링] getters와 mapGetters 적용하기
+
+#### code guide
+
+* template은 최대한 코드를 깔끔하게 표현한다
+  * computed를 사용한다
+* 깔끔하게 표현하기 위한 내부로직은 컴포넌트의 sciprt에 작성한다
+
+### 4. mapMutations, mapActions 소개 및 헬퍼의 유연한 문법
+
+#### mapMutations
+
+* Vue에 선언한 mutations 속성을 뷰 컴포넌트에 더 쉽게 연결해주는 헬퍼
+
+* ```javascript
+  // App.vue
+  import { mapMutations } from 'vuex'
+  
+  methods: {
+      ...mapMutations(['clickBtn']),
+      authLogin() {},
+      displayTable() {}  
+  }
+  
+  // store.js
+  mutations: {
+      clickBtn(state) {
+          alert(state.msg);
+      }
+  }
+  ```
+
+* ```html
+  <button @click="clickBtn">
+      pupup message
+  </button>
+  ```
+
+### 5. mapActions
+
+* Vue에 선언한 mapActions 속성을 뷰 컴포넌트에 더 쉽게 연결해주는 헬퍼
+
+* ```javascript
+  // App.vue
+  import { mapActions } from 'vuex'
+  
+  methods: {
+      ...mapActions(['delayClickBtn']),
+  }
+  
+  // store.js
+  mutations: {
+      delayClickBtn(context) {
+          setTimeout(() => context.commit('clickBtn'), 2000);
+      }
+  }
+  ```
+
+* ```html
+  <button @click="delayClickBtn">
+      delay pupup message
+  </button>
+  ```
+
+#### 헬퍼의 유연한 문법
+
+* Vuex에 선언한 속성을 그대로 컴포넌트에 연결하는 문법
+  * 속성의 이름과 가져온 속성의 이름이 같다면 속성의 이름만 선언하면된다
+  * 인자를 넘기지 않아도 된다
+
+* Vuex에 선언한 속성을 컴포넌트의 특정 메서드에다가 연결하는 문법
+
+```javascript
+// 객체 리터럴
+...mapMutations({
+    popupMsg: 'clickBtn' // 컴포넌트 메서드 명: Store의 뮤테이션 명
+})
+```
+
+### 6. mapMutations 적용
+
+```html
+<span class="removeBtn" v-on:click="removeTodo({todoItem, index})">
+```
+
+```javascript
+methods: {
+    ...mapMutations({
+      removeTodo: 'removeOndItem',
+      toggleComplete: 'toggleOneItem'
+    })
+}
+```
+
+특정 메서드에다가 Vuex의 mutations를 연결할 수 있고, 선언시 인자를 적을 필요가 없다.
+
+template에서 넘어온 인자에 맞게 알아서 넘겨준다. vuex mutation의 인자는 1개이기 때문에 template에서 object로 인자 2개를 묶어 하나로 만들어 넘겨준다.
+
+### 7. 헬퍼 함수가 주는 간편함
+
+화면(template)의 코드는 최대한 간결해야한다. 
+
+this$store.getters의 접근보다는 script를 사용해서 코드를 리팩토링 해야한다. 
+
+```vue
+<template>
+    <div id="root">
+        <p>{{ this.$store.getters.originalPrice }}</p>
+        <p>{{ this.$store.getters.dooublePrice }}</p>
+        <p>{{ this.$store.getters.triplePrice }}</p>
+    </div>
+</template>
+
+<script>
+export default {
+    computed: {
+        originalPrice(){
+
+        },
+        doublePrice(){
+
+        },
+        triplePrice() {
+
+        },
+    }
+}
+</script>
+```
+
+```vue
+<template>
+    <div id="root">
+        <p>{{ originalPrice }}</p>
+        <p>{{ doublePrice }}</p>
+        <p>{{ triplePrice }}</p>
+    </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+    computed: {
+        ...mapGetters(['originalPrice', 'doublePrice', 'triplePrice'])
+}
+</script>
+```
+
+### 8. vuex로 리팩토링한 application 구조 분석 및 정리
+
+App.vue는 하위 컴포넌트만 가지 고 있고 실직적인 데이터는 store에서 처리하고 하위 컴포넌트는 화면만 나타낸다 
+
+### 9. 스토어 속성 모듈화 방법
+
+스토어의 속성인 state, getters, mutations, actions를 별도의 .js파일로 모듈화 시키고 해당 모듈을 import하여 사용한다.
+
+> store.js
+
+```javascript
+import Vue from "vue";
+import Vuex from "vuex";
+import * as getters from './getters'
+import * as mutations from './mutations'
+// Vue 플러그인 사용
+// Vue를 사용하는 모든 전역에서 Vuex를 이용할 수 있게 한다
+Vue.use(Vuex);
+const storage = {
+  fetch() {
+    const arr = [];
+    if (localStorage.length > 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i) !== "loglevel:webpack-dev-server") {
+          arr.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+          // this.todoItems.push(localStorage.key(i));
+        }
+      }
+    }
+    return arr;
+  }
+};
+// export 하는 순간 store를 다른 파일에서 사용할 수 있다.
+export const store = new Vuex.Store({
+  state: {
+    todoItems: storage.fetch()
+  },
+  getters,
+  mutations,
+});
+
+```
+
+> mutations.js
+
+```javascript
+const addOneItem = (state, todoItem) => {
+    const obj = { completed: false, item: todoItem };
+    localStorage.setItem(todoItem, JSON.stringify(obj));
+    state.todoItems.push(obj);
+  }
+const removeOndItem = (state, payload) => {
+    localStorage.removeItem(payload.todoItem.item);
+    state.todoItems.splice(payload.index, 1);
+  }
+const toggleOneItem = (state, payload) => {
+    state.todoItems[payload.index].completed = !state.todoItems[payload.index].completed;
+    // 데이터를 바꿨으면 지웠다 다시 set해줘야 한다.
+    // 로컬 스토리지의 데이터를 갱신
+    localStorage.removeItem(payload.todoItem.item);
+    localStorage.setItem(payload.todoItem.item, JSON.stringify(payload.todoItem));
+  }
+const clearAllItems = (state) =>{
+    localStorage.clear();
+    state.todoItems= [];
+  }
+
+  export { addOneItem, removeOndItem, toggleOneItem, clearAllItems };
+```
+
+> getters.js
+
+```javascript
+export const storedTodoItems = (state) => {
+    return state.todoItems;
+  }
+```
 
